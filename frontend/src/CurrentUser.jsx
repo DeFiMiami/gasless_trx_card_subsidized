@@ -1,12 +1,10 @@
 import { useRecoilState } from "recoil";
 import { userAddressAtom } from "./state";
-import {signin, signout} from "./Auth";
+import {signin, signout} from "./actions";
 
 export default function CurrentUser() {
-    const [userAddress, setUserAddress] = useRecoilState(userAddressAtom);
+    const [userAddress] = useRecoilState(userAddressAtom);
 
-    //const currentAddress = localStorage.getItem('currentAddress')
-    console.log('userAddress', userAddress, '!')
     if (userAddress) {
         return (
             <div>
