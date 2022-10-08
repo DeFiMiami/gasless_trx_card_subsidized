@@ -1,10 +1,11 @@
-import express, {Response} from 'express';
-import axios, {AxiosResponse} from "axios";
+import express from 'express';
 import {BigNumber, ethers} from "ethers";
 import * as dotenv from "dotenv";
 import {TransactionRequest} from "@ethersproject/abstract-provider";
 import {forwardRequestToProvider, getMaxBaseFeeInFutureBlock, resSend} from "./utils";
-require( 'console-stamp' )( console );
+import {subsidizeWithStrategy1} from "./sponsor-strategy";
+
+require('console-stamp')(console);
 
 dotenv.config();
 
@@ -35,7 +36,6 @@ const METAMASK_BALANCE_CHECK_CONTRACTS = [
     '0x9788c4e93f9002a7ad8e72633b11e8d1ecd51f9b'];
 
 
-
 app.post('/proxy/:chainId', async (req, res) => {
     var providerUrl = PROVIDERS[req.params.chainId]
     const provider = new ethers.providers.JsonRpcProvider(providerUrl)
@@ -47,7 +47,7 @@ app.post('/proxy/:chainId', async (req, res) => {
 
     if (req.body.method == 'eth_getBalance') {
         let firstAddress = (req.body)['params'][0].toLowerCase();
-        resSend(res,{'jsonrpc': '2.0', 'id': req.body.id, 'result': '0x6a6328983ab81a00000'});
+        resSend(res, {'jsonrpc': '2.0', 'id': req.body.id, 'result': '0x6a6328983ab81a00000'});
         return
     }
     if (req.body.method == 'eth_call' &&
@@ -74,26 +74,28 @@ app.post('/proxy/:chainId', async (req, res) => {
         let userParsedTransaction = await ethers.utils.parseTransaction(userSignedTransaction);
         resSend(res, {'jsonrpc': '2.0', 'id': req.body.id, 'result': userParsedTransaction.hash});
 
-        let valueToSubsidize = 1 // TODO
+        let valueToSubsidize = await subsidizeWithStrategy1(provider, userParsedTransaction, estimatedBaseGasFee)
 
-        let sponsorTransaction: TransactionRequest = await sponsorWallet.populateTransaction({
-            to: userParsedTransaction.from,
-            value: valueToSubsidize,
-            type: 2,
-            gasLimit: 21000,
-            maxPriorityFeePerGas: PRIORITY_GAS_PRICE,
-            maxFeePerGas: estimatedBaseGasFee.add(PRIORITY_GAS_PRICE)
-        });
-        let sponsorSignedTransaction = await sponsorWallet.signTransaction(sponsorTransaction);
+        if (valueToSubsidize > 0) {
+            let sponsorTransaction: TransactionRequest = await sponsorWallet.populateTransaction({
+                to: userParsedTransaction.from,
+                value: valueToSubsidize,
+                type: 2,
+                gasLimit: 21000,
+                maxPriorityFeePerGas: PRIORITY_GAS_PRICE,
+                maxFeePerGas: estimatedBaseGasFee.add(PRIORITY_GAS_PRICE)
+            });
+            let sponsorSignedTransaction = await sponsorWallet.signTransaction(sponsorTransaction);
 
-        let ourTx = await provider.sendTransaction(sponsorSignedTransaction)
-        console.log("Sent sponsor transaction", ourTx.hash);
-        await ourTx.wait()
-        console.log("Sponsor transaction minted", ourTx.hash);
+            let ourTx = await provider.sendTransaction(sponsorSignedTransaction)
+            console.log("Sent sponsor transaction", ourTx.hash);
+            await ourTx.wait()
+            console.log("Sponsor transaction minted", ourTx.hash);
+        }
 
         let userTx = await provider.sendTransaction(userSignedTransaction)
         console.log("Sent user transaction", userTx.hash);
-        await ourTx.wait()
+        await userTx.wait()
         console.log("User transaction minted", userTx.hash);
         return
     }
@@ -101,7 +103,6 @@ app.post('/proxy/:chainId', async (req, res) => {
     let providerResponse = await forwardRequestToProvider(providerUrl, req);
     resSend(res, providerResponse.data)
 })
-
 
 
 app.listen(port, () => {
