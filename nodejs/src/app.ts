@@ -35,7 +35,7 @@ app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
 });
 
-app.get('/', (req, res) => {
+app.get('/test', (req, res) => {
     res.send('Hello World!');
 });
 
@@ -130,9 +130,6 @@ app.post('/proxy/:chainId', async (req, res) => {
     resSend(res, providerResponse.data)
 })
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
 
 app.get('/api', (req, res) => {
     res.json({ message: "Hello from server!" });
@@ -147,7 +144,7 @@ app.post('/signin', async function (req, res) {
         data: JSON.parse(req.body.msgParams),
         sig: req.body.sig,
       });
-    console.log('recovered=', userAddress)
+    console.log('userAddress=', userAddress)
     let user = await AppDataSource.getRepository(User)
         .findOne({where: {address: userAddress}})
     if (user === null) {
@@ -157,7 +154,41 @@ app.post('/signin', async function (req, res) {
         })
         user = await AppDataSource.getRepository(User).save(user)
     }
-    var accessToken = jwt.sign({ userAddress: '0x960376b3F62f41E7e66809a05D1C5afdFD60A0E9' }, jwtPrivateKey);
-    console.log('user=', user)
+    var accessToken = jwt.sign({ userAddress }, jwtPrivateKey);
     return res.json({accessToken, userAddress})
+})
+
+function getUserAddressFromRequest(req) {
+    const token = req.headers['authorization'] && req.headers['authorization'].toString().split(' ')[1]
+    console.log('token', token)
+    if (token === null) {
+        return null
+    }
+    try {
+        const decoded: any = jwt.verify(token, jwtPrivateKey)
+        console.log('decoded', decoded)
+        return decoded.userAddress
+    } catch (err) {
+        console.log('err', err)
+        return null
+    }
+}
+
+app.get('/account', async function (req, res) {
+    console.log('account')
+    // const users = await AppDataSource.getRepository(User)
+    //     .createQueryBuilder('user')
+    //     .orderBy('user.id')
+    //     .getMany()
+    // users.forEach((user) => {
+    //     console.log(user)
+    // })
+    const userAddress = getUserAddressFromRequest(req)
+    if (userAddress === null) {
+        return res.status(401).send('Not authorized')
+    }
+    const user = await AppDataSource.getRepository(User)
+        .findOne({where: {address: userAddress}})
+    console.log('userAddress', userAddress)
+    return res.json(user)
 })

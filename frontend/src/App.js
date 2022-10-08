@@ -6,7 +6,7 @@ import {
     Link
 } from "react-router-dom";
 import './App.css';
-import Account from './account/Account'
+import UserAddressOrSignIn from './account/UserAddressOrSignIn'
 import {RecoilRoot} from "recoil"
 import RecoilNexus from 'recoil-nexus'
 
@@ -32,7 +32,7 @@ function App() {
                     </Routes>
                 </Router>
 
-                <Account/>
+                <UserAddressOrSignIn/>
             </div>
         </RecoilRoot>
     );

@@ -2,7 +2,7 @@ import { useRecoilState } from "recoil";
 import { userAddressAtom } from "../state";
 import {signin, signout} from "../actions";
 
-export default function Account() {
+export default function UserAddressOrSignIn() {
     const [userAddress] = useRecoilState(userAddressAtom);
 
     if (userAddress) {
