@@ -1,10 +1,13 @@
 import Web3 from 'web3';
 import {recoverTypedSignature_v4} from 'eth-sig-util'
 import axios from "axios";
+import {useRecoilState} from "recoil";
+import { getRecoil, setRecoil } from 'recoil-nexus'
+import {userAddressAtom} from "./state";
 
 
-export default async function testSign() {
-
+export async function signin() {
+    //const [userAddress, setUserAddress] = useRecoilState(userAddressAtom);
     const {ethereum} = window;
     const web3 = window.web3 = new Web3(ethereum);
     await ethereum.enable();
@@ -61,12 +64,12 @@ export default async function testSign() {
             console.log('TYPED SIGNED:' + JSON.stringify(result.result));
             console.log('params=', msgParams);
 
-            let recovered = recoverTypedSignature_v4({
+            let recoveredAddress = recoverTypedSignature_v4({
                 data: JSON.parse(msgParams),
                 sig: result.result,
             });
 
-            console.log('recovered=', recovered)
+            console.log('recovered=', recoveredAddress)
 
             let response = await axios.post('/signin',
                 {msgParams: msgParams, sig: result.result},
@@ -75,14 +78,23 @@ export default async function testSign() {
                 }
             );
             const accessToken = response.data.accessToken
-            localStorage.setItem('accessToken', accessToken)
+            const userAddress = response.data.userAddress
+
+            localStorage.setItem('userAddress', userAddress)
+            //setUserAddress(userAddress)
+            setRecoil(userAddressAtom, userAddress)
+            // localStorage.setItem('currentAddress', recoveredAddress)
+
+            console.log('userAddress', userAddress)
             console.log('accessToken', accessToken)
         }
     );
 }
 
-async function logout() {
-    localStorage.removeItem('accessToken')
+export async function signout() {
+    // localStorage.removeItem('accessToken')
+    localStorage.removeItem('userAddress')
+    setRecoil(userAddressAtom, null)
 }
 
 async function getProfile() {

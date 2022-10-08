@@ -140,21 +140,21 @@ app.post('/stripe-webhook', async function (req, res) {
 })
 
 app.post('/signin', async function (req, res) {
-    let recoveredAddress = recoverTypedSignature_v4({
+    let userAddress = recoverTypedSignature_v4({
         data: JSON.parse(req.body.msgParams),
         sig: req.body.sig,
       });
-    console.log('recovered=', recoveredAddress)
+    console.log('recovered=', userAddress)
     let user = await AppDataSource.getRepository(User)
-        .findOne({where: {address: recoveredAddress}})
+        .findOne({where: {address: userAddress}})
     if (user === null) {
         user = await AppDataSource.getRepository(User).create({
             createdAt: getCurrentTimestampUnix(),
-            address: recoveredAddress
+            address: userAddress
         })
         user = await AppDataSource.getRepository(User).save(user)
     }
     var accessToken = jwt.sign({ userAddress: '0x960376b3F62f41E7e66809a05D1C5afdFD60A0E9' }, jwtPrivateKey);
     console.log('user=', user)
-    return res.json({accessToken})
+    return res.json({accessToken, userAddress})
 })

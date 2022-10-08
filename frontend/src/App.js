@@ -6,31 +6,38 @@ import {
     Link
 } from "react-router-dom";
 import './App.css';
-import testSign from './Auth'
+import CurrentUser from './CurrentUser'
+import {RecoilRoot} from "recoil"
+import RecoilNexus from 'recoil-nexus'
 
 function App() {
     return (
-        <div className="App">
-            <Router>
-                <div className="list">
-                    <ul>
-                        <li><Link to="/">Home</Link></li>
-                        <li><Link to="page1">Page 1</Link></li>
-                        <li><Link to="page2">Page 2</Link></li>
-                        <li><Link to="page3">Page 3</Link></li>
-                    </ul>
-                </div>
-                <Routes>
-                    <Route path="/" element={<h1>Home Page</h1>}/>
-                    <Route path="page1" element={<Page1/>}/>
-                    <Route path="page2" element={<Page2/>}/>
-                    <Route path="page3" element={<Page3/>}/>
-                </Routes>
-            </Router>
-            <button onClick={testSign}>Sign In</button>
-        </div>
+        <RecoilRoot>
+            <RecoilNexus/>
+            <div className="App">
+                <Router>
+                    <div className="list">
+                        <ul>
+                            <li><Link to="/">Home</Link></li>
+                            <li><Link to="page1">Page 1</Link></li>
+                            <li><Link to="page2">Page 2</Link></li>
+                            <li><Link to="page3">Page 3</Link></li>
+                        </ul>
+                    </div>
+                    <Routes>
+                        <Route path="/" element={<h1>Home Page</h1>}/>
+                        <Route path="page1" element={<Page1/>}/>
+                        <Route path="page2" element={<Page2/>}/>
+                        <Route path="page3" element={<Page3/>}/>
+                    </Routes>
+                </Router>
+
+                <CurrentUser/>
+            </div>
+        </RecoilRoot>
     );
 }
+
 
 function Page1() {
     return (
