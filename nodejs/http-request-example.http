@@ -12,9 +12,16 @@ Content-Type: application/json
   ]
 }
 
-### Test proxy
+### Send transaction
 
 POST http://localhost:3000/proxy/5
 Content-Type: application/json
 
-{"id":"1665243002211","jsonrpc":"2.0","method":"eth_chainId","params":[]}
+{
+  "id": 5736905017073,
+  "jsonrpc": "2.0",
+  "method": "eth_sendRawTransaction",
+  "params": [
+    "0x02f88e0506843b9aca00843b9aca2a828c1c9419c14a453e54601e824f48da40fba60312f42cb380a46057361d0000000000000000000000000000000000000000000000000000000000000004c001a00986ca3a5ed56fb303a4df133535c4da3566b9bb96c4ba2deead3318530fc7eca063ea02cd972838dd103d7fba170a6471bd2e2df03a401f1420b3eabd7e4078bc"
+  ]
+}
