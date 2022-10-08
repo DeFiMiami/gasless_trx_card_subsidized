@@ -21,10 +21,9 @@ const PROVIDERS = {
 
 app.post('/proxy/:chainId', async (req, res) => {
     var providerUrl = PROVIDERS[req.params.chainId]
-
     const provider = new ethers.providers.JsonRpcProvider(providerUrl)
 
-    console.log('request: ', JSON.stringify(req.body));
+    console.log('Request: ', JSON.stringify(req.body));
 
     if (req.body.method == 'eth_getBalance') {
         let firstAddress = (req.body)['params'][0].toLowerCase();
@@ -32,8 +31,18 @@ app.post('/proxy/:chainId', async (req, res) => {
         return
     }
 
+    let providerResponse = await forwardRequestToProvider(providerUrl, req);
+    res.send(providerResponse.data);
 })
 
+async function forwardRequestToProvider<P, ResBody, ReqBody, ReqQuery, Locals>(providerUrl: string, req) {
+    let alchemyResponse = await axios.post(providerUrl, req.body, {
+            headers: {'Content-Type': 'application/json'}
+        }
+    );
+    console.log('Provider response: ', JSON.stringify(alchemyResponse.data));
+    return alchemyResponse;
+}
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
