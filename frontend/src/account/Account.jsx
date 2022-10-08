@@ -1,8 +1,8 @@
 import { useRecoilState } from "recoil";
-import { userAddressAtom } from "./state";
-import {signin, signout} from "./actions";
+import { userAddressAtom } from "../state";
+import {signin, signout} from "../actions";
 
-export default function CurrentUser() {
+export default function Account() {
     const [userAddress] = useRecoilState(userAddressAtom);
 
     if (userAddress) {
