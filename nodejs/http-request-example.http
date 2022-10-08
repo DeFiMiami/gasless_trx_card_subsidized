@@ -1,0 +1,14 @@
+### Test proxy
+
+POST http://localhost:3000/proxy/5
+Content-Type: application/json
+
+{
+  "id": 1249535660577998,
+  "jsonrpc": "2.0",
+  "method": "eth_getBalance2",
+  "params": [
+    "0x960376b3f62f41e7e66809a05d1c5afdfd60a0e9"
+  ]
+}
+
