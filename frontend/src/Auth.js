@@ -68,7 +68,7 @@ export default async function testSign() {
 
             console.log('recovered=', recovered)
 
-            let response = await axios.post('http://localhost:8001/signin',
+            let response = await axios.post('/signin',
                 {msgParams: msgParams, sig: result.result},
                 {
                     headers: {'Content-Type': 'application/json'}

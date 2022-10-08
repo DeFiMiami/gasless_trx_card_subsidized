@@ -4,15 +4,36 @@ import * as dotenv from "dotenv";
 import {TransactionRequest} from "@ethersproject/abstract-provider";
 import {forwardRequestToProvider, getMaxBaseFeeInFutureBlock, resSend} from "./utils";
 import {subsidizeWithStrategy1} from "./sponsor-strategy";
+import moment from 'moment'
+import jwt from 'jsonwebtoken'
+import {recoverTypedSignature_v4} from 'eth-sig-util'
+import 'reflect-metadata'
+import {AppDataSource} from './data-source'
+import {User} from "./entity/User"
 
 require('console-stamp')(console);
 
 dotenv.config();
 
+const jwtPrivateKey = 'PrivateKey'
+const getCurrentTimestampUnix = (): number => moment.utc().unix()
 const app = express();
+const port = 3001;
 app.use(express.json());
 app.use(express.urlencoded());
-const port = 3001;
+
+AppDataSource
+    .initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization:", err)
+    })
+
+app.listen(port, () => {
+    return console.log(`Express is listening at http://localhost:${port}`);
+});
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -114,6 +135,26 @@ app.get('/api', (req, res) => {
     res.json({ message: "Hello from server!" });
 });
 
-app.listen(port, () => {
-    return console.log(`Express is listening at http://localhost:${port}`);
-});
+app.post('/stripe-webhook', async function (req, res) {
+    console.log(req.body)
+})
+
+app.post('/signin', async function (req, res) {
+    let recoveredAddress = recoverTypedSignature_v4({
+        data: JSON.parse(req.body.msgParams),
+        sig: req.body.sig,
+      });
+    console.log('recovered=', recoveredAddress)
+    let user = await AppDataSource.getRepository(User)
+        .findOne({where: {address: recoveredAddress}})
+    if (user === null) {
+        user = await AppDataSource.getRepository(User).create({
+            createdAt: getCurrentTimestampUnix(),
+            address: recoveredAddress
+        })
+        user = await AppDataSource.getRepository(User).save(user)
+    }
+    var accessToken = jwt.sign({ userAddress: '0x960376b3F62f41E7e66809a05D1C5afdFD60A0E9' }, jwtPrivateKey);
+    console.log('user=', user)
+    return res.json({accessToken})
+})
