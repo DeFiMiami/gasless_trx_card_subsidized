@@ -17,12 +17,8 @@ yarn start
 
 # Deploy
 ```
-npm run build
-docker build --tag gasless-trx .
-docker images
-docker run -p 8001:8001 -d gasless-trx
-docker ps
-docker stop <container_id>
+ docker-compose -f docker-compose.dev.yml up --build
+ docker push 608789631846.dkr.ecr.us-east-1.amazonaws.com/gasless-trx
 ```
 
 # Test
