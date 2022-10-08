@@ -1,12 +1,12 @@
-import React from 'react';
+import logo from './logo.svg';
 import {
     BrowserRouter as Router,
     Routes,
     Route,
     Link
 } from "react-router-dom";
-import logo from './logo.svg';
 import './App.css';
+import testSign from './Auth'
 
 function App() {
     return (
@@ -27,6 +27,7 @@ function App() {
                     <Route path="page3" element={<Page3/>}/>
                 </Routes>
             </Router>
+            <button onClick={testSign}>Sign In</button>
         </div>
     );
 }
