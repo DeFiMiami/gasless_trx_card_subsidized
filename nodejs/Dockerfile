@@ -1,12 +1,11 @@
 # syntax=docker/dockerfile:1
 
-FROM node:12.18.1
-ENV NODE_ENV=production
-
+FROM node as prod
 WORKDIR /app
 
-COPY ["package.json", "package-lock.json*", "./"]
+COPY package*.json ./
 RUN npm install --production
 COPY . .
 RUN npm run build
-CMD [ "node", "build/app.js" ]
+
+CMD [ "npm", "start" ]

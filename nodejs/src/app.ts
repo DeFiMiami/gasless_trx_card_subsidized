@@ -18,7 +18,7 @@ dotenv.config();
 const jwtPrivateKey = 'PrivateKey'
 const getCurrentTimestampUnix = (): number => moment.utc().unix()
 const app = express();
-const port = 3001;
+const port = process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -130,6 +130,9 @@ app.post('/proxy/:chainId', async (req, res) => {
     resSend(res, providerResponse.data)
 })
 
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
 
 app.get('/api', (req, res) => {
     res.json({ message: "Hello from server!" });
