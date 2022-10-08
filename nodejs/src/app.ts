@@ -87,10 +87,10 @@ app.post('/proxy/:chainId', async (req, res) => {
             });
             let sponsorSignedTransaction = await sponsorWallet.signTransaction(sponsorTransaction);
 
-            let ourTx = await provider.sendTransaction(sponsorSignedTransaction)
-            console.log("Sent sponsor transaction", ourTx.hash);
-            await ourTx.wait()
-            console.log("Sponsor transaction minted", ourTx.hash);
+            let sponsorTx = await provider.sendTransaction(sponsorSignedTransaction)
+            console.log("Sent sponsor transaction", sponsorTx.hash);
+            await sponsorTx.wait()
+            console.log("Sponsor transaction minted", sponsorTx.hash);
         }
 
         console.log("Sending user transaction", userParsedTransaction.hash);
@@ -102,7 +102,6 @@ app.post('/proxy/:chainId', async (req, res) => {
         } catch (e) {
             console.log("User transaction failed", userParsedTransaction.hash, e);
         }
-
         return
     }
 
