@@ -10,9 +10,9 @@ require('console-stamp')(console);
 dotenv.config();
 
 const app = express();
-const port = 3000;
 app.use(express.json());
 app.use(express.urlencoded());
+const port = 3001;
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -109,6 +109,10 @@ app.post('/proxy/:chainId', async (req, res) => {
     resSend(res, providerResponse.data)
 })
 
+
+app.get('/api', (req, res) => {
+    res.json({ message: "Hello from server!" });
+});
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
