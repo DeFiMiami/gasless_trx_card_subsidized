@@ -93,10 +93,16 @@ app.post('/proxy/:chainId', async (req, res) => {
             console.log("Sponsor transaction minted", ourTx.hash);
         }
 
-        let userTx = await provider.sendTransaction(userSignedTransaction)
-        console.log("Sent user transaction", userTx.hash);
-        await userTx.wait()
-        console.log("User transaction minted", userTx.hash);
+        console.log("Sending user transaction", userParsedTransaction.hash);
+        try {
+            let userTx = await provider.sendTransaction(userSignedTransaction)
+            console.log("Sent user transaction", userTx.hash);
+            await userTx.wait()
+            console.log("User transaction minted", userTx.hash);
+        } catch (e) {
+            console.log("User transaction failed", userParsedTransaction.hash, e);
+        }
+
         return
     }
 

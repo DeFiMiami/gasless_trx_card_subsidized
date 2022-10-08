@@ -4,11 +4,11 @@ import {JsonRpcProvider} from "@ethersproject/providers/lib/json-rpc-provider";
 
 export async function subsidizeWithStrategy1(provider: JsonRpcProvider, userTransaction: Transaction, baseGasFee: BigNumber) {
     // let userBalance = provider.getBalance(userTransaction.from)
-    // let userTransactionGasPrice = baseGasFee?.add(userTransaction.maxPriorityFeePerGas!)
     if (await canRunWithoutSubsidizing(provider, userTransaction)) {
-        return 0
+        return 1 // leave 1 for now to force sponsored transaction every time
     } else {
-        return BigNumber.from(500_000)
+        let userTransactionGasPrice = baseGasFee?.add(userTransaction.maxPriorityFeePerGas!)
+        return BigNumber.from(500_000).mul(userTransactionGasPrice)
     }
 }
 
