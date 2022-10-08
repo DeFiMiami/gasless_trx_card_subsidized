@@ -30,6 +30,7 @@ docker-compose -f docker-compose.dev.yml up --build
 
 ## Heroku
 ```
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
 heroku container:push --app gasless-trx web
 heroku container:release --app gasless-trx web
 heroku open --app gasless-trx

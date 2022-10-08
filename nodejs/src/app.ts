@@ -18,7 +18,7 @@ dotenv.config();
 const jwtPrivateKey = 'PrivateKey'
 const getCurrentTimestampUnix = (): number => moment.utc().unix()
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT == null ? 3000 : process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded());
 
