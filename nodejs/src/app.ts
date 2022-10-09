@@ -265,3 +265,20 @@ app.post('/create-checkout-session', async (req, res) => {
     //res.redirect(303, session.url);
     res.send(session.url)
 });
+
+app.get('/get-deposits', async function (req, res) {
+    // const users = await AppDataSource.getRepository(User)
+    //     .createQueryBuilder('user')
+    //     .orderBy('user.id')
+    //     .getMany()
+    // users.forEach((user) => {
+    //     console.log(user)
+    // })
+    // const user = await getUserFromRequest(req)
+    // if (user === null) {
+    //     return res.status(401).send('Not authorized')
+    // }
+    // console.log('user', user)
+    // const balance = 10
+    return res.json([{d:1}, {d:2}])
+})

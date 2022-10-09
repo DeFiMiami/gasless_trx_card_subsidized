@@ -3,7 +3,7 @@ import {useRecoilState} from "recoil";
 import {accessTokenAtom, userBalanceAtom} from "../state";
 import {addFunds} from "../actions";
 
-export default function Deposit() {
+export default function AddFunds() {
     const [accessToken] = useRecoilState(accessTokenAtom);
 
     return (

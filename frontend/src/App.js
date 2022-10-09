@@ -9,13 +9,14 @@ import UserAddressOrSignIn from './account/UserAddressOrSignIn'
 import {RecoilRoot} from "recoil"
 import RecoilNexus from 'recoil-nexus'
 import Profile from "./account/Profile";
-import Deposit from "./account/Deposit";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import Button from '@mui/material/Button';
 
+import AddFunds from "./account/AddFunds";
+import Deposits from "./account/Deposits";
 
 function App() {
     return (
@@ -27,19 +28,20 @@ function App() {
                         <ul>
                             <li><Link to="/">Home</Link></li>
                             <li><Link to="add-funds-success">Page 1</Link></li>
-                            <li><Link to="page2">Page 2</Link></li>
+                            <li><Link to="deposits">Deposits</Link></li>
                             <li><Link to="page3">Page 3</Link></li>
                         </ul>
                     </div>
                     <Routes>
                         <Route path="/" element={<h1>Home Page</h1>}/>
                         <Route path="add-funds-success" element={<Page1/>}/>
-                        <Route path="page2" element={<Page2/>}/>
+                        <Route path="deposits" element={<DepositsPage/>}/>
                         <Route path="page3" element={<Page3/>}/>
                     </Routes>
                 </Router>
                 <Profile/>
                 <UserAddressOrSignIn/>
+                <AddFunds/>
                 <Deposit/>
                 <Button variant="contained">Hello World</Button>
             </div>
@@ -56,11 +58,9 @@ function Page1() {
     )
 }
 
-function Page2() {
+function DepositsPage() {
     return (
-        <div>
-            <h1>Page 2</h1>
-        </div>
+        <Deposits/>
     )
 }
 

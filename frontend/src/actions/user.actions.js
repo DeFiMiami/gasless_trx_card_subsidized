@@ -2,7 +2,7 @@ import Web3 from 'web3';
 //import {recoverTypedSignature_v4} from 'eth-sig-util'
 import axios from "axios";
 import {getRecoil, setRecoil} from 'recoil-nexus'
-import {userAddressAtom, accessTokenAtom, userBalanceAtom} from "../state";
+import {userAddressAtom, accessTokenAtom, userBalanceAtom, userDepositsAtom} from "../state";
 
 
 async function signin() {
@@ -118,13 +118,22 @@ async function addFunds() {
     ).then(response => {
         window.location = response.data
     })
+}
 
-    //this.history.pushState(null, response);
+async function getDeposits() {
+    const accessToken = await getRecoil(accessTokenAtom);
+    const response = await axios.get('/get-deposits',
+        {
+            headers: {'Authorization': `Bearer ${accessToken}`}
+        }
+    );
+    setRecoil(userDepositsAtom, response.data)
 }
 
 export {
     signin,
     signout,
     getProfile,
-    addFunds
+    addFunds,
+    getDeposits
 }
