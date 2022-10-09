@@ -22,25 +22,29 @@ export default function Deposits() {
     }, [accessToken])
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{minWidth: 650}} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Date</TableCell>
-                        <TableCell>USD</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {userDeposits.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            sx={{'&:last-child td, &:last-child th': {border: 0}}}>
-                            <TableCell component="th" scope="row">{row.date}</TableCell>
-                            <TableCell>{(row.amount / 100).toFixed(2)}$</TableCell>
+        <div>
+            <h3>Deposits:</h3>
+            <TableContainer component={Paper}>
+                <Table sx={{minWidth: 650}} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Date</TableCell>
+                            <TableCell>USD</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {userDeposits.map((row) => (
+                            <TableRow
+                                key={row.id}
+                                sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                                <TableCell component="th"
+                                           scope="row">{new Date(row.createdAt).toLocaleTimeString()}</TableCell>
+                                <TableCell>{(row.amount / 100).toFixed(2)}$</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
     );
 }

@@ -23,32 +23,36 @@ export default function UserOperations() {
     }, [accessToken])
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{minWidth: 650}} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Date</TableCell>
-                        <TableCell>USD</TableCell>
-                        <TableCell>Details</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {userOperations.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            sx={{'&:last-child td, &:last-child th': {border: 0}}}>
-                            <TableCell component="th" scope="row">{row.date}</TableCell>
-                            <TableCell>{(row.usdCost / 100).toFixed(2)}$</TableCell>
-                            <TableCell>
-                                <p>User txn:<br/>
-                                    {row.userTxHash}</p>
-                                <p>Sponsor txn:<br/>
-                                    {row.sponsorTxHash}</p>
-                            </TableCell>
+        <div>
+            <h3>Transactions:</h3>
+            <TableContainer component={Paper}>
+                <Table sx={{minWidth: 650}} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Date</TableCell>
+                            <TableCell>USD</TableCell>
+                            <TableCell>Details</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {userOperations.map((row) => (
+                            <TableRow
+                                key={row.id}
+                                sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                                <TableCell component="th"
+                                           scope="row">{new Date(row.createdAt).toLocaleTimeString()}</TableCell>
+                                <TableCell>{(row.usdCost / 100).toFixed(2)}$</TableCell>
+                                <TableCell>
+                                    <p>User txn:<br/>
+                                        {row.userTxHash}</p>
+                                    <p>Sponsor txn:<br/>
+                                        {row.sponsorTxHash}</p>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
     );
 }
