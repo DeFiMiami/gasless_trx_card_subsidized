@@ -98,7 +98,7 @@ async function signout() {
     setRecoil(userAddressAtom, null)
 }
 
-async function getProfile() {
+async function getUserBalance() {
     const accessToken = await getRecoil(accessTokenAtom);
     const response = await axios.get('/profile',
         {
@@ -143,7 +143,7 @@ async function getUserOperations() {
 export {
     signin,
     signout,
-    getProfile,
+    getUserBalance,
     addFunds,
     getDeposits,
     getUserOperations

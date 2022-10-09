@@ -19,9 +19,9 @@ yarn start
 ## Local
 ```
 npm run build
-docker build --tag gasless-trx .
+docker build --tag defimiami-gogas .
 docker images
-docker run -p 8001:8001 -d gasless-trx
+docker run -p 8001:8001 -d defimiami-gogas
 docker ps
 docker stop <container_id>
 
@@ -31,15 +31,15 @@ docker-compose -f docker-compose.dev.yml up --build
 ## Heroku
 ```
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
-heroku container:push --app gasless-trx web
-heroku container:release --app gasless-trx web
-heroku open --app gasless-trx
-heroku logs --app gasless-trx
+heroku container:push --app defimiami-gogas web
+heroku container:release --app defimiami-gogas web
+heroku open --app defimiami-gogas
+heroku logs --app defimiami-gogas
 ```
 
 ## Amazon (not finished)
 ```
-docker push 608789631846.dkr.ecr.us-east-1.amazonaws.com/gasless-trx
+docker push 608789631846.dkr.ecr.us-east-1.amazonaws.com/defimiami-gogas
 ```
 
 

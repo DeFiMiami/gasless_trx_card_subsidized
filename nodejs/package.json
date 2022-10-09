@@ -7,7 +7,8 @@
     "start:dev": "ts-node-dev src/app.ts",
     "start": "npm run build && node build/app.js",
     "build": "rimraf ./build && tsc",
-    "deploy": "npm run build && export DOCKER_DEFAULT_PLATFORM=linux/amd64 && heroku container:push --app gasless-trx web && heroku container:release --app gasless-trx web"
+    "build:frontend": "cd ../frontend && npm run build",
+    "deploy": "npm run build && npm run build:frontend && export DOCKER_DEFAULT_PLATFORM=linux/amd64 && heroku container:push --app defimiami-gogas web && heroku container:release --app defimiami-gogas web"
   },
   "keywords": [],
   "author": "",
