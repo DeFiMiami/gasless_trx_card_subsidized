@@ -16,6 +16,8 @@ async function main() {
     };
     let transactionResponse = await wallet.sendTransaction(trx);
     console.log(transactionResponse)
+    await provider.waitForTransaction(transactionResponse.hash)
+    console.log("Successfully minted")
 }
 
 main()
