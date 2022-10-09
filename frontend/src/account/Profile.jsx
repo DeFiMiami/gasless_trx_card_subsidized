@@ -8,7 +8,7 @@ export default function Profile() {
     const [userBalance] = useRecoilState(userBalanceAtom);
 
     useEffect(() => {
-        getProfile().then(balance => {console.log('useEffect', balance)})
+        getProfile()
     }, [])
 
     if (accessToken) {

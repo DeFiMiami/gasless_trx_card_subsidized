@@ -106,7 +106,6 @@ async function getProfile() {
         }
     );
     setRecoil(userBalanceAtom, response.data.balance)
-    return response.data.balance
 }
 
 export {

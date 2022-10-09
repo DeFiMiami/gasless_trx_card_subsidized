@@ -193,6 +193,6 @@ app.get('/profile', async function (req, res) {
     const user = await AppDataSource.getRepository(User)
         .findOne({where: {address: userAddress}})
     console.log('userAddress', userAddress)
-    const balance = 0
+    const balance = 10
     return res.json({balance})
 })
