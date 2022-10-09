@@ -6,6 +6,7 @@ import UserBalance from "./UserBalance";
 import UserOperations from "./UserOperations";
 import AddFunds from "./AddFunds";
 import Deposits from "./Deposits";
+import {Grid, Item} from "@mui/material";
 
 export default function MainPageOrSignIn() {
     const [userAddress] = useRecoilState(userAddressAtom);
@@ -13,10 +14,16 @@ export default function MainPageOrSignIn() {
     if (userAddress) {
         return (
             <div>
-                <UserBalance/>
-                <AddFunds/>
-                <UserOperations/>
-                <Deposits/>
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                            <UserBalance/>
+                            <AddFunds/>
+                            <Deposits/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <UserOperations/>
+                    </Grid>
+                </Grid>
                 <div>
                     Signed in as {userAddress}</div>
                 <span>
