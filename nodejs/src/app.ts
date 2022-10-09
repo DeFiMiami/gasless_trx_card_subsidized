@@ -12,10 +12,10 @@ import 'reflect-metadata'
 import {AppDataSource} from './data-source'
 import {User} from "./entity/User"
 import {Deposit} from "./entity/Deposit";
+import {getUserAddress, getUserUsdBalance} from "./db-utils"
+import {UserOperation} from "./entity/UserOperation";
 
 const stripe = require('stripe')('sk_test_JxyAObUDQF5QwJZV9MF6c0iw');
-import {getUserAddress, getUserBalance} from "./db-utils"
-import {UserOperation} from "./entity/UserOperation";
 const path = require('node:path');
 
 require('console-stamp')(console);
@@ -76,8 +76,10 @@ const METAMASK_BALANCE_CHECK_CONTRACTS = [
 
 async function getFakeBalance<P, ResBody, ReqBody, ReqQuery, Locals>(req: Request, address: string) {
     let tokenPrice = NATIVE_TOKEN_PRICE[req.params.chainId]
-    let userBalance = await getUserBalance(address)
-    return BigNumber.from(ETH).mul(userBalance).div(tokenPrice).div(100)
+    let userBalance = await getUserUsdBalance(address)
+    let fakeBalance = BigNumber.from(ETH).mul(userBalance).div(tokenPrice).div(100);
+    console.log('FakeBalance', address, fakeBalance)
+    return fakeBalance
 }
 
 app.post('/entrypoint/:chainId', async (req, res) => {
@@ -106,9 +108,15 @@ app.post('/entrypoint/:chainId', async (req, res) => {
         const providerResponse = await forwardRequestToProvider(providerUrl, req);
         // const decodedAlchemyResult = ethers.utils.defaultAbiCoder.decode(['address[]'], alchemyResponse.data.result);
 
-        let fakeBalance = await getFakeBalance(req, walletAddresses[0])
-        const newBalances = Array(walletAddresses.length).fill(fakeBalance)
-        providerResponse.data.result = ethers.utils.defaultAbiCoder.encode(['uint256[]'], [newBalances]);
+        let fakedBalancePromises = walletAddresses.map(async (wallet, index, array) => {
+            return await getFakeBalance(req, wallet)
+        })
+        let fakedBalances = []
+        for (let i = 0; i < fakedBalancePromises.length; i++) {
+            fakedBalances.push(await fakedBalancePromises[i])
+        }
+        console.log('fakedBalances', fakedBalances)
+        providerResponse.data.result = ethers.utils.defaultAbiCoder.encode(['uint256[]'], [fakedBalances]);
         resSend(res, providerResponse.data);
         return
     }
@@ -118,10 +126,9 @@ app.post('/entrypoint/:chainId', async (req, res) => {
 
         let user: User = await getUserAddress(userParsedTransaction.from)
         if (user == null) {
-            resSend(res, {'jsonrpc': '2.0', 'error': "unknown user"});
+            resSend(res, {'jsonrpc': '2.0', "error": {"code": 0, "message": "GoGas: unknown user"}});
             return
         }
-
         resSend(res, {'jsonrpc': '2.0', 'id': req.body.id, 'result': userParsedTransaction.hash});
 
         let userOperation = await AppDataSource.getRepository(UserOperation).create({
@@ -240,7 +247,7 @@ app.get('/profile', async function (req, res) {
     if (user === null) {
         return res.status(401).send('Not authorized')
     }
-    let totalBalance = await getUserBalance(user.address);
+    let totalBalance = await getUserUsdBalance(user.address);
     return res.json({balance: totalBalance})
 })
 
