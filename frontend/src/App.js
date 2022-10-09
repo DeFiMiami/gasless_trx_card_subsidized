@@ -10,6 +10,12 @@ import {RecoilRoot} from "recoil"
 import RecoilNexus from 'recoil-nexus'
 import Profile from "./account/Profile";
 import Deposit from "./account/Deposit";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import Button from '@mui/material/Button';
+
 
 function App() {
     return (
@@ -35,6 +41,7 @@ function App() {
                 <Profile/>
                 <UserAddressOrSignIn/>
                 <Deposit/>
+                <Button variant="contained">Hello World</Button>
             </div>
         </RecoilRoot>
     );

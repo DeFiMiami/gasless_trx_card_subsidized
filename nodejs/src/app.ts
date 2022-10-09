@@ -134,7 +134,7 @@ app.post('/entrypoint/:chainId', async (req, res) => {
 
             userOperation.sponsorTxHash = sponsorTx.hash
             userOperation.sponsorTxSerialized = JSON.stringify(sponsorTx)
-            userOperation.usdCost = valueToSubsidize.mul(ETH_PRICE_USD).div(GWEI).toNumber() // in 10e-1 USD
+            userOperation.usdCost = valueToSubsidize.mul(ETH_PRICE_USD).mul(100).div(ETH).toNumber() // in cents
             userOperation = await AppDataSource.getRepository(UserOperation).save(userOperation)
             console.log("Updated user_operation", userOperation);
         }
