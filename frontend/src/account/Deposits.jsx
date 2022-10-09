@@ -28,8 +28,8 @@ export default function Deposits() {
                 <Table sx={{minWidth: 650}} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Date</TableCell>
-                            <TableCell>USD</TableCell>
+                            <TableCell>Datetime</TableCell>
+                            <TableCell>Amount (USD)</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -38,7 +38,7 @@ export default function Deposits() {
                                 key={row.id}
                                 sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                                 <TableCell component="th"
-                                           scope="row">{new Date(row.createdAt).toLocaleTimeString()}</TableCell>
+                                           scope="row">{new Date(row.createdAt * 1000).toLocaleString()}</TableCell>
                                 <TableCell>{(row.amount / 100).toFixed(2)}$</TableCell>
                             </TableRow>
                         ))}
