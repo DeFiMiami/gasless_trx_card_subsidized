@@ -7,7 +7,7 @@ import UserOperations from "./UserOperations";
 import AddFunds from "./AddFunds";
 import Deposits from "./Deposits";
 
-export default function UserAddressOrSignIn() {
+export default function MainPageOrSignIn() {
     const [userAddress] = useRecoilState(userAddressAtom);
 
     if (userAddress) {

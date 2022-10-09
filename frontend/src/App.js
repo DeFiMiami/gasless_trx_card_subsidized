@@ -1,6 +1,6 @@
 import {BrowserRouter as Router} from "react-router-dom";
 import './App.css';
-import UserAddressOrSignIn from './account/UserAddressOrSignIn'
+import MainPageOrSignIn from './account/MainPageOrSignIn'
 import {RecoilRoot} from "recoil"
 import RecoilNexus from 'recoil-nexus'
 import '@fontsource/roboto/300.css';
@@ -22,8 +22,7 @@ function App() {
                     {/*    <Route path="page3" element={<Page3/>}/>*/}
                     {/*</Routes>*/}
                 </Router>
-                <UserAddressOrSignIn/>
-
+                <MainPageOrSignIn/>
             </div>
         </RecoilRoot>
     );

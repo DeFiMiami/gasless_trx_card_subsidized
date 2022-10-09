@@ -33,10 +33,10 @@ export default function Deposits() {
                 <TableBody>
                     {userDeposits.map((row) => (
                         <TableRow
-                            key={row.date}
+                            key={row.id}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                             <TableCell component="th" scope="row">{row.date}</TableCell>
-                            <TableCell>{row.amount.toFixed(2)}$</TableCell>
+                            <TableCell>{(row.amount / 100).toFixed(2)}$</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

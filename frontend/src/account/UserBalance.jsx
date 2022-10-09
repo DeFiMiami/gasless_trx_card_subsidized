@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import {useRecoilState} from "recoil";
 import {accessTokenAtom, userBalanceAtom} from "../state";
-import {getProfile} from "../actions";
+import {getUserBalance} from "../actions";
 
 export default function UserBalance() {
     const [accessToken] = useRecoilState(accessTokenAtom);
@@ -9,13 +9,13 @@ export default function UserBalance() {
 
     useEffect(() => {
         if (accessToken !== null) {
-            getProfile()
+            getUserBalance()
         }
     }, [accessToken])
 
     return (
         <div>
-            User balance <div>{userBalance}</div>
+            My balance <div>{(userBalance/100).toFixed(2)}$</div>
         </div>
     )
 }
