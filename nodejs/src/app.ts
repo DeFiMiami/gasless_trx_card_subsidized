@@ -2,7 +2,8 @@ import express from 'express';
 import {BigNumber, ethers} from "ethers";
 import * as dotenv from "dotenv";
 import {TransactionRequest} from "@ethersproject/abstract-provider";
-import {forwardRequestToProvider, getMaxBaseFeeInFutureBlock, resSend} from "./utils";
+import {getMaxBaseFeeInFutureBlock} from "./chain-utils";
+import {forwardRequestToProvider, resSend} from "./http-utils";
 import {subsidizeWithStrategy1} from "./sponsor-strategy";
 import moment from 'moment'
 import jwt from 'jsonwebtoken'
@@ -48,7 +49,8 @@ const PROVIDERS = {
 
 const ETH = BigNumber.from(1e9).mul(1e9); // 10^18
 const GWEI = BigNumber.from(1e9); // 10^9
-const PRIORITY_GAS_PRICE = GWEI.mul(5); // miner bribe
+const PRIORITY_GAS_PRICE = GWEI.mul(5); // miner bribe for sponsored transaction
+const ETH_PRICE_USD = 1500 // TODO, request from coinbase API
 
 // https://github.com/MetaMask/metamask-filecoin-developer-beta/blob/4ec4bf9995e64bfb0eb732cbe10ae2f2bac2ddff/app/scripts/constants/contracts.js
 const METAMASK_BALANCE_CHECK_CONTRACTS = [
@@ -111,7 +113,7 @@ app.post('/entrypoint/:chainId', async (req, res) => {
 
         let estimatedBaseGasFee = await getMaxBaseFeeInFutureBlock(provider, 3)
         let valueToSubsidize = await subsidizeWithStrategy1(provider, userParsedTransaction, estimatedBaseGasFee)
-        if (valueToSubsidize > 0) {
+        if (valueToSubsidize.gt(0)) {
             let sponsorTransaction: TransactionRequest = await sponsorWallet.populateTransaction({
                 to: userParsedTransaction.from,
                 value: valueToSubsidize,
@@ -129,6 +131,7 @@ app.post('/entrypoint/:chainId', async (req, res) => {
 
             userOperation.sponsorTxHash = sponsorTx.hash
             userOperation.sponsorTxSerialized = JSON.stringify(sponsorTx)
+            userOperation.usdCost = valueToSubsidize.mul(ETH_PRICE_USD).div(GWEI).toNumber() // in 10e-1 USD
             userOperation = await AppDataSource.getRepository(UserOperation).save(userOperation)
             console.log("Updated user_operation", userOperation);
         }

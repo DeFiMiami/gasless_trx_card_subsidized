@@ -12,18 +12,18 @@ export class UserOperation {
     @Column()
     userId: number
 
-    @Column()
+    @Column({nullable: true})
     sponsorTxHash: string
 
-    @Column()
+    @Column({nullable: true})
     sponsorTxSerialized: string
 
-    @Column()
+    @Column({nullable: true})
     userTxHash: string
 
-    @Column()
+    @Column({nullable: true})
     userTxSerialized: string
 
-    @Column()
+    @Column({nullable: true})
     usdCost: number
 }
