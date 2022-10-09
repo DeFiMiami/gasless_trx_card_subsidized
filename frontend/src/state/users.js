@@ -17,12 +17,18 @@ const userBalanceAtom = atom({
 
 const userDepositsAtom = atom({
     key: "userDeposits",
-    default: null
+    default: []
+})
+
+const userOperationsAtom = atom({
+    key: "userOperations",
+    default: []
 })
 
 export {
     userAddressAtom,
     accessTokenAtom,
     userBalanceAtom,
-    userDepositsAtom
+    userDepositsAtom,
+    userOperationsAtom
 };

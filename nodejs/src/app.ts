@@ -269,3 +269,12 @@ app.get('/get-deposits', async function (req, res) {
         .find({select: {createdAt: true, amount:true}, where: {userId: user.id}, order: {id: 'DESC'}})
     return res.json(deposits)
 })
+
+app.get('/get-user-operations', async function (req, res) {
+    const user = await getUserFromRequest(req)
+    const userOperations = await AppDataSource.getRepository(UserOperation)
+        .find({select: {createdAt: true, sponsorTxHash:true,
+                sponsorTxSerialized: true, userTxHash: true, userTxSerialized: true, usdCost: true},
+            where: {userId: user.id}, order: {id: 'DESC'}})
+    return res.json(userOperations)
+})
