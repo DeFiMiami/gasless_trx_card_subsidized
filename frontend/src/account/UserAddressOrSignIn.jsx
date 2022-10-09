@@ -2,6 +2,10 @@ import { useRecoilState } from "recoil";
 import { userAddressAtom } from "../state";
 import {signin, signout} from "../actions";
 import Button from "@mui/material/Button";
+import Profile from "./Profile";
+import UserOperations from "./UserOperations";
+import AddFunds from "./AddFunds";
+import Deposits from "./Deposits";
 
 export default function UserAddressOrSignIn() {
     const [userAddress] = useRecoilState(userAddressAtom);
@@ -9,9 +13,14 @@ export default function UserAddressOrSignIn() {
     if (userAddress) {
         return (
             <div>
-                Signed in as {userAddress}
+                <Profile/>
+                <UserOperations/>
+                <AddFunds/>
+                <Deposits/>
+                <div>
+                Signed in as {userAddress}</div>
                 <span>
-                    <button onClick={signout}>Sign out</button>
+                    <Button variant="contained" onClick={signout}>Sign out</Button>
                 </span>
             </div>
         )

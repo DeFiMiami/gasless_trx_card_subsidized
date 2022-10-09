@@ -18,51 +18,20 @@ function App() {
         <RecoilRoot>
             <RecoilNexus/>
             <div className="App">
+                <h1>Pay for gas with credit card on all EVM blockchains</h1>
                 <Router>
-                    <div className="list">
-                        <ul>
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="deposits">Deposits</Link></li>
-                        </ul>
-                    </div>
-                    <Routes>
-                        <Route path="/" element={<h1>Home Page</h1>}/>
-                        <Route path="deposits" element={<DepositsPage/>}/>
-                        <Route path="add-funds-success" element={<AddFundsSuccess/>}/>
-                        <Route path="add-funds-cancel" element={<AddFundsCancel/>}/>
-                    </Routes>
+                    {/*<Routes>*/}
+                    {/*    <Route path="/" element={<h1>Home Page</h1>}/>*/}
+                    {/*    <Route path="add-funds-success" element={<Page1/>}/>*/}
+                    {/*    <Route path="deposits" element={<DepositsPage/>}/>*/}
+                    {/*    <Route path="page3" element={<Page3/>}/>*/}
+                    {/*</Routes>*/}
                 </Router>
-                <Profile/>
                 <UserAddressOrSignIn/>
-                <UserOperations/>
-                <AddFunds/>
-                <Deposits/>
+
             </div>
         </RecoilRoot>
     );
-}
-
-
-function AddFundsSuccess() {
-    return (
-        <div>
-            <h1>Add Funds Success</h1>
-        </div>
-    )
-}
-
-function DepositsPage() {
-    return (
-        <Deposits/>
-    )
-}
-
-function AddFundsCancel() {
-    return (
-        <div>
-            <h1>Add Funds Cancel</h1>
-        </div>
-    )
 }
 
 export default App;
