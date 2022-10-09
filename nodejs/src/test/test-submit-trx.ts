@@ -6,7 +6,9 @@ const {ethers} = require("ethers");
 dotenv.config();
 
 async function main() {
-    const provider = new ethers.providers.JsonRpcProvider("http://localhost:3000/proxy/5");
+    const provider = new ethers.providers.JsonRpcProvider("http://localhost:3000/entrypoint/5");
+    // const provider = new ethers.providers.JsonRpcProvider("https://gasless-trx.herokuapp.com/entrypoint/5");
+
     let wallet = new ethers.Wallet(process.env.USER_PRIVATE_KEY!)
     wallet = wallet.connect(provider)
 
