@@ -1,17 +1,12 @@
-import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
+import {BrowserRouter as Router} from "react-router-dom";
 import './App.css';
 import UserAddressOrSignIn from './account/UserAddressOrSignIn'
 import {RecoilRoot} from "recoil"
 import RecoilNexus from 'recoil-nexus'
-import Profile from "./account/Profile";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import UserOperations from "./account/UserOperations";
-
-import AddFunds from "./account/AddFunds";
-import Deposits from "./account/Deposits";
 
 function App() {
     return (

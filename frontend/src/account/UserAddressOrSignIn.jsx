@@ -1,8 +1,8 @@
-import { useRecoilState } from "recoil";
-import { userAddressAtom } from "../state";
+import {useRecoilState} from "recoil";
+import {userAddressAtom} from "../state";
 import {signin, signout} from "../actions";
 import Button from "@mui/material/Button";
-import Profile from "./Profile";
+import UserBalance from "./UserBalance";
 import UserOperations from "./UserOperations";
 import AddFunds from "./AddFunds";
 import Deposits from "./Deposits";
@@ -13,12 +13,12 @@ export default function UserAddressOrSignIn() {
     if (userAddress) {
         return (
             <div>
-                <Profile/>
-                <UserOperations/>
+                <UserBalance/>
                 <AddFunds/>
+                <UserOperations/>
                 <Deposits/>
                 <div>
-                Signed in as {userAddress}</div>
+                    Signed in as {userAddress}</div>
                 <span>
                     <Button variant="contained" onClick={signout}>Sign out</Button>
                 </span>
