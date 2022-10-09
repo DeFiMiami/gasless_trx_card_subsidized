@@ -130,6 +130,9 @@ app.post('/proxy/:chainId', async (req, res) => {
     resSend(res, providerResponse.data)
 })
 
+app.get('/', (req, res) => {
+    res.json({ message: "v1" });
+});
 
 app.get('/api', (req, res) => {
     res.json({ message: "Hello from server!" });

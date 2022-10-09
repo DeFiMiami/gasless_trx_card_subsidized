@@ -37,7 +37,7 @@ heroku open --app gasless-trx
 heroku logs --app gasless-trx
 ```
 
-## Amazon
+## Amazon (not finished)
 ```
 docker push 608789631846.dkr.ecr.us-east-1.amazonaws.com/gasless-trx
 ```
