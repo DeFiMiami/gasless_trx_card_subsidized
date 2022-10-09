@@ -2,7 +2,8 @@ import express from 'express';
 import {BigNumber, ethers} from "ethers";
 import * as dotenv from "dotenv";
 import {TransactionRequest} from "@ethersproject/abstract-provider";
-import {forwardRequestToProvider, getMaxBaseFeeInFutureBlock, resSend} from "./utils";
+import {getMaxBaseFeeInFutureBlock} from "./chain-utils";
+import {forwardRequestToProvider, resSend} from "./http-utils";
 import {subsidizeWithStrategy1} from "./sponsor-strategy";
 import moment from 'moment'
 import jwt from 'jsonwebtoken'
