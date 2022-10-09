@@ -287,3 +287,17 @@ app.get('/get-user-operations', async function (req, res) {
         })
     return res.json(userOperations)
 })
+
+app.get('/add-funds-success', async function (req, res) {
+    return res.send('<!DOCTYPE html>\n' +
+        '<html lang="en">\n' +
+        '<head>\n' +
+        '    <meta charset="UTF-8">\n' +
+        '    <title>Payment Succcessful</title>\n' +
+        '</head>\n' +
+        '<body>\n' +
+        '  <h1>Payment successful</h1>\n' +
+        '  <a href="/">Continue</a>\n' +
+        '</body>\n' +
+        '</html>')
+})
