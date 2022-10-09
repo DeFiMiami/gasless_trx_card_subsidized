@@ -10,6 +10,8 @@ import {recoverTypedSignature_v4} from 'eth-sig-util'
 import 'reflect-metadata'
 import {AppDataSource} from './data-source'
 import {User} from "./entity/User"
+import {getUserAddress} from "./db-utils"
+import {UserOperation} from "./entity/UserOperation";
 
 require('console-stamp')(console);
 
@@ -46,7 +48,7 @@ const PROVIDERS = {
 
 const ETH = BigNumber.from(1e9).mul(1e9); // 10^18
 const GWEI = BigNumber.from(1e9); // 10^9
-
+const PRIORITY_GAS_PRICE = GWEI.mul(5); // miner bribe
 
 // https://github.com/MetaMask/metamask-filecoin-developer-beta/blob/4ec4bf9995e64bfb0eb732cbe10ae2f2bac2ddff/app/scripts/constants/contracts.js
 const METAMASK_BALANCE_CHECK_CONTRACTS = [
@@ -57,7 +59,7 @@ const METAMASK_BALANCE_CHECK_CONTRACTS = [
     '0x9788c4e93f9002a7ad8e72633b11e8d1ecd51f9b'];
 
 
-app.post('/proxy/:chainId', async (req, res) => {
+app.post('/entrypoint/:chainId', async (req, res) => {
     var providerUrl = PROVIDERS[req.params.chainId]
     const provider = new ethers.providers.JsonRpcProvider(providerUrl)
 
@@ -87,16 +89,28 @@ app.post('/proxy/:chainId', async (req, res) => {
         return
     }
     if (req.body.method == 'eth_sendRawTransaction') {
-        const PRIORITY_GAS_PRICE = GWEI.mul(5); // miner bribe
-
-        let estimatedBaseGasFee = await getMaxBaseFeeInFutureBlock(provider, 3)
-
         let userSignedTransaction = req.body.params[0];
         let userParsedTransaction = await ethers.utils.parseTransaction(userSignedTransaction);
+
+        let user: User = await getUserAddress(userParsedTransaction.from)
+        if (user == null) {
+            resSend(res, {'jsonrpc': '2.0', 'error': "unknown user"});
+            return
+        }
+
         resSend(res, {'jsonrpc': '2.0', 'id': req.body.id, 'result': userParsedTransaction.hash});
 
-        let valueToSubsidize = await subsidizeWithStrategy1(provider, userParsedTransaction, estimatedBaseGasFee)
+        let userOperation = await AppDataSource.getRepository(UserOperation).create({
+            userId: user.id,
+            createdAt: getCurrentTimestampUnix(),
+            userTxHash: userParsedTransaction.hash,
+            userTxSerialized: JSON.stringify(userParsedTransaction)
+        })
+        userOperation = await AppDataSource.getRepository(UserOperation).save(userOperation)
+        console.log("Create user_operation", userOperation);
 
+        let estimatedBaseGasFee = await getMaxBaseFeeInFutureBlock(provider, 3)
+        let valueToSubsidize = await subsidizeWithStrategy1(provider, userParsedTransaction, estimatedBaseGasFee)
         if (valueToSubsidize > 0) {
             let sponsorTransaction: TransactionRequest = await sponsorWallet.populateTransaction({
                 to: userParsedTransaction.from,
@@ -112,6 +126,11 @@ app.post('/proxy/:chainId', async (req, res) => {
             console.log("Sent sponsor transaction", sponsorTx.hash);
             await sponsorTx.wait()
             console.log("Sponsor transaction minted", sponsorTx.hash);
+
+            userOperation.sponsorTxHash = sponsorTx.hash
+            userOperation.sponsorTxSerialized = JSON.stringify(sponsorTx)
+            userOperation = await AppDataSource.getRepository(UserOperation).save(userOperation)
+            console.log("Updated user_operation", userOperation);
         }
 
         console.log("Sending user transaction", userParsedTransaction.hash);
@@ -120,6 +139,11 @@ app.post('/proxy/:chainId', async (req, res) => {
             console.log("Sent user transaction", userTx.hash);
             await userTx.wait()
             console.log("User transaction minted", userTx.hash);
+
+            userOperation.userTxHash = userTx.hash
+            userOperation.userTxSerialized = JSON.stringify(userTx)
+            userOperation = await AppDataSource.getRepository(UserOperation).save(userOperation)
+            console.log("Updated user_operation", userOperation);
         } catch (e) {
             console.log("User transaction failed", userParsedTransaction.hash, e);
         }
@@ -131,11 +155,11 @@ app.post('/proxy/:chainId', async (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.json({ message: "v1" });
+    res.json({message: "v1"});
 });
 
 app.get('/api', (req, res) => {
-    res.json({ message: "Hello from server!" });
+    res.json({message: "Hello from server!"});
 });
 
 app.post('/stripe-webhook', async function (req, res) {
@@ -146,7 +170,7 @@ app.post('/signin', async function (req, res) {
     let userAddress = recoverTypedSignature_v4({
         data: JSON.parse(req.body.msgParams),
         sig: req.body.sig,
-      });
+    });
     console.log('userAddress=', userAddress)
     let user = await AppDataSource.getRepository(User)
         .findOne({where: {address: userAddress}})
@@ -157,7 +181,7 @@ app.post('/signin', async function (req, res) {
         })
         user = await AppDataSource.getRepository(User).save(user)
     }
-    var accessToken = jwt.sign({ userAddress }, jwtPrivateKey);
+    var accessToken = jwt.sign({userAddress}, jwtPrivateKey);
     return res.json({accessToken, userAddress})
 })
 
