@@ -19,6 +19,7 @@ yarn start
 ## Local
 ```
 npm run build
+npm run build:frontend
 docker build --tag defimiami-gogas .
 docker images
 docker run -p 8001:8001 -d defimiami-gogas

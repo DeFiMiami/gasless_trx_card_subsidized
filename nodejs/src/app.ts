@@ -78,7 +78,7 @@ async function getFakeBalance<P, ResBody, ReqBody, ReqQuery, Locals>(req: Reques
     let tokenPrice = NATIVE_TOKEN_PRICE[req.params.chainId]
     let userBalance = await getUserUsdBalance(address)
     let fakeBalance = BigNumber.from(ETH).mul(userBalance).div(tokenPrice).div(100);
-    console.log('FakeBalance', address, fakeBalance)
+    // console.log('FakeBalance', address, fakeBalance)
     return fakeBalance
 }
 

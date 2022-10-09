@@ -28,6 +28,6 @@ export async function getUserUsdBalance(userAddress: string) {
         .getRawOne();
     const charge = chargeSum.sum
     let totalBalance = deposits - charge;
-    console.log('UserBalance_USD_cents', addressLowerCase, totalBalance)
+    // console.log('UserBalance_USD_cents', addressLowerCase, totalBalance)
     return totalBalance;
 }

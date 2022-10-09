@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "ts-node-dev src/app.ts",
-    "start": "npm run build && node build/app.js",
+    "start": "node build/app.js",
     "build": "rimraf ./build && tsc",
-    "build:frontend": "cd ../frontend && npm run build",
+    "build:frontend": "cd ../frontend && npm run build && cp -a build ../nodejs/build/frontend",
     "deploy": "npm run build && npm run build:frontend && export DOCKER_DEFAULT_PLATFORM=linux/amd64 && heroku container:push --app defimiami-gogas web && heroku container:release --app defimiami-gogas web"
   },
   "keywords": [],
