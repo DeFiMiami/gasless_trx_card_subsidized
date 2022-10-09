@@ -173,7 +173,7 @@ app.post('/stripe-webhook', async function (req, res) {
     if (stripeResponse.type === 'checkout.session.completed') {
         const stripeId = stripeResponse.data.object.payment_intent
         const deposit = await AppDataSource.getRepository(Deposit)
-                .findOne({where: {stripeId: stripeId}})
+            .findOne({where: {stripeId: stripeId}})
         deposit.amount = stripeResponse.data.object.amount_total
         await AppDataSource.getRepository(Deposit).save(deposit)
     }
@@ -228,13 +228,19 @@ app.get('/profile', async function (req, res) {
     if (user === null) {
         return res.status(401).send('Not authorized')
     }
-    const result1 = await AppDataSource.getRepository(Deposit)
+    const depositsSum = await AppDataSource.getRepository(Deposit)
         .createQueryBuilder("deposit")
-            .select("SUM(deposit.amount)", "sum")
-            .getRawOne();
-    const deposits = result1.sum
+        .select("SUM(deposit.amount)", "sum")
+        .getRawOne();
+    const deposits = depositsSum.sum
+    const chargeSum = await AppDataSource.getRepository(UserOperation)
+        .createQueryBuilder("uo")
+        .select("SUM(uo.usdCost)", "sum")
+        .getRawOne();
+    const charge = chargeSum.sum
     console.log('balance', deposits)
-    return res.json({balance: deposits})
+    console.log('charge', charge)
+    return res.json({balance: deposits - charge})
 })
 
 app.post('/create-checkout-session', async (req, res) => {
@@ -267,15 +273,19 @@ app.post('/create-checkout-session', async (req, res) => {
 app.get('/get-deposits', async function (req, res) {
     const user = await getUserFromRequest(req)
     const deposits = await AppDataSource.getRepository(Deposit)
-        .find({select: {id:true, createdAt: true, amount:true}, where: {userId: user.id}, order: {id: 'DESC'}})
+        .find({select: {id: true, createdAt: true, amount: true}, where: {userId: user.id}, order: {id: 'DESC'}})
     return res.json(deposits)
 })
 
 app.get('/get-user-operations', async function (req, res) {
     const user = await getUserFromRequest(req)
     const userOperations = await AppDataSource.getRepository(UserOperation)
-        .find({select: {id:true, createdAt: true, sponsorTxHash:true,
-                sponsorTxSerialized: true, userTxHash: true, userTxSerialized: true, usdCost: true},
-            where: {userId: user.id}, order: {id: 'DESC'}})
+        .find({
+            select: {
+                id: true, createdAt: true, sponsorTxHash: true,
+                sponsorTxSerialized: true, userTxHash: true, userTxSerialized: true, usdCost: true
+            },
+            where: {userId: user.id}, order: {id: 'DESC'}
+        })
     return res.json(userOperations)
 })
