@@ -9,6 +9,7 @@ import UserAddressOrSignIn from './account/UserAddressOrSignIn'
 import {RecoilRoot} from "recoil"
 import RecoilNexus from 'recoil-nexus'
 import Profile from "./account/Profile";
+import Deposit from "./account/Deposit";
 
 function App() {
     return (
@@ -19,20 +20,21 @@ function App() {
                     <div className="list">
                         <ul>
                             <li><Link to="/">Home</Link></li>
-                            <li><Link to="page1">Page 1</Link></li>
+                            <li><Link to="add-funds-success">Page 1</Link></li>
                             <li><Link to="page2">Page 2</Link></li>
                             <li><Link to="page3">Page 3</Link></li>
                         </ul>
                     </div>
                     <Routes>
                         <Route path="/" element={<h1>Home Page</h1>}/>
-                        <Route path="page1" element={<Page1/>}/>
+                        <Route path="add-funds-success" element={<Page1/>}/>
                         <Route path="page2" element={<Page2/>}/>
                         <Route path="page3" element={<Page3/>}/>
                     </Routes>
                 </Router>
-                <Profile />
+                <Profile/>
                 <UserAddressOrSignIn/>
+                <Deposit/>
             </div>
         </RecoilRoot>
     );
@@ -42,10 +44,7 @@ function App() {
 function Page1() {
     return (
         <div>
-            <h1>Page 1</h1>
-            <form action="/create-checkout-session" method="POST">
-                <button type="submit" id="checkout-button">Checkout</button>
-            </form>
+            <h1>Add Funds Success</h1>
         </div>
     )
 }

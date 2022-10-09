@@ -8,8 +8,10 @@ export default function Profile() {
     const [userBalance] = useRecoilState(userBalanceAtom);
 
     useEffect(() => {
-        getProfile()
-    }, [])
+        if (accessToken !== null) {
+            getProfile()
+        }
+    }, [accessToken])
 
     if (accessToken) {
         return (

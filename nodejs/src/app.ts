@@ -2,8 +2,7 @@ import express from 'express';
 import {BigNumber, ethers} from "ethers";
 import * as dotenv from "dotenv";
 import {TransactionRequest} from "@ethersproject/abstract-provider";
-import {getMaxBaseFeeInFutureBlock} from "./chain-utils";
-import {forwardRequestToProvider, resSend} from "./http-utils";
+import {forwardRequestToProvider, getMaxBaseFeeInFutureBlock, resSend} from "./utils";
 import {subsidizeWithStrategy1} from "./sponsor-strategy";
 import moment from 'moment'
 import jwt from 'jsonwebtoken'
@@ -11,6 +10,9 @@ import {recoverTypedSignature_v4} from 'eth-sig-util'
 import 'reflect-metadata'
 import {AppDataSource} from './data-source'
 import {User} from "./entity/User"
+import {Deposit} from "./entity/Deposit";
+
+const stripe = require('stripe')('sk_test_JxyAObUDQF5QwJZV9MF6c0iw');
 import {getUserAddress} from "./db-utils"
 import {UserOperation} from "./entity/UserOperation";
 
@@ -166,7 +168,15 @@ app.get('/api', (req, res) => {
 });
 
 app.post('/stripe-webhook', async function (req, res) {
-    console.log(req.body)
+    const stripeResponse = req.body
+    if (stripeResponse.type === 'checkout.session.completed') {
+        const stripeId = stripeResponse.data.object.payment_intent
+        const deposit = await AppDataSource.getRepository(Deposit)
+                .findOne({where: {stripeId: stripeId}})
+        deposit.amount = stripeResponse.data.object.amount_total
+        await AppDataSource.getRepository(Deposit).save(deposit)
+    }
+    res.status(200).send('OK')
 })
 
 app.post('/signin', async function (req, res) {
@@ -188,7 +198,7 @@ app.post('/signin', async function (req, res) {
     return res.json({accessToken, userAddress})
 })
 
-function getUserAddressFromRequest(req) {
+async function getUserFromRequest(req) {
     const token = req.headers['authorization'] && req.headers['authorization'].toString().split(' ')[1]
     console.log('token', token)
     if (token === null) {
@@ -196,8 +206,11 @@ function getUserAddressFromRequest(req) {
     }
     try {
         const decoded: any = jwt.verify(token, jwtPrivateKey)
-        console.log('decoded', decoded)
-        return decoded.userAddress
+        console.log('decoded token', decoded)
+        const user = await AppDataSource.getRepository(User)
+            .findOne({where: {address: decoded.userAddress}})
+        console.log('getUserFromRequest user=', user)
+        return user
     } catch (err) {
         console.log('err', err)
         return null
@@ -213,13 +226,41 @@ app.get('/profile', async function (req, res) {
     // users.forEach((user) => {
     //     console.log(user)
     // })
-    const userAddress = getUserAddressFromRequest(req)
-    if (userAddress === null) {
+    const user = await getUserFromRequest(req)
+    if (user === null) {
         return res.status(401).send('Not authorized')
     }
-    const user = await AppDataSource.getRepository(User)
-        .findOne({where: {address: userAddress}})
-    console.log('userAddress', userAddress)
+    console.log('user', user)
     const balance = 10
     return res.json({balance})
 })
+
+app.post('/create-checkout-session', async (req, res) => {
+    const YOUR_DOMAIN = 'http://localhost:3000';
+    const user = await getUserFromRequest(req)
+    const session = await stripe.checkout.sessions.create({
+        line_items: [
+            {
+                // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                price: 'price_0LqRLPcxjtE7q9osfPMRo2UT',
+                quantity: 1,
+            },
+        ],
+        mode: 'payment',
+        success_url: `${YOUR_DOMAIN}/add-funds-success`,
+        cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+    });
+    console.log('stripe session', session)
+
+    console.log('userId', user.id)
+    console.log('stripeId', session.payment_intent)
+    const deposit = await AppDataSource.getRepository(Deposit).create({
+        createdAt: getCurrentTimestampUnix(),
+        userId: user.id,
+        stripeId: session.payment_intent,
+        amount: 0
+    })
+    await AppDataSource.getRepository(Deposit).save(deposit)
+    //res.redirect(303, session.url);
+    res.send(session.url)
+});

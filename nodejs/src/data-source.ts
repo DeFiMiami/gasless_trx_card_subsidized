@@ -6,7 +6,7 @@ import {Deposit} from "./entity/Deposit";
 
 export const AppDataSource = new DataSource({
     type: "sqlite",
-    database: "db.data",
+    database: "db.sqlite",
     synchronize: true,
     logging: false,
     entities: [User, UserOperation, Deposit],

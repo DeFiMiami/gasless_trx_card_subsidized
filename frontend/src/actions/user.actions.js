@@ -100,7 +100,7 @@ async function signout() {
 
 async function getProfile() {
     const accessToken = await getRecoil(accessTokenAtom);
-    let response = await axios.get('/profile',
+    const response = await axios.get('/profile',
         {
             headers: {'Authorization': `Bearer ${accessToken}`}
         }
@@ -108,8 +108,23 @@ async function getProfile() {
     setRecoil(userBalanceAtom, response.data.balance)
 }
 
+async function addFunds() {
+    const accessToken = await getRecoil(accessTokenAtom);
+    axios.post('/create-checkout-session',
+        {},
+        {
+            headers: {'Authorization': `Bearer ${accessToken}`}
+        }
+    ).then(response => {
+        window.location = response.data
+    })
+
+    //this.history.pushState(null, response);
+}
+
 export {
     signin,
     signout,
-    getProfile
+    getProfile,
+    addFunds
 }
