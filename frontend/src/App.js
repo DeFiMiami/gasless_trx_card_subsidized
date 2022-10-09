@@ -42,7 +42,7 @@ function App() {
                 <Profile/>
                 <UserAddressOrSignIn/>
                 <AddFunds/>
-                <Deposit/>
+                <Deposits/>
                 <Button variant="contained">Hello World</Button>
             </div>
         </RecoilRoot>

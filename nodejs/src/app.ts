@@ -251,10 +251,7 @@ app.post('/create-checkout-session', async (req, res) => {
         success_url: `${YOUR_DOMAIN}/add-funds-success`,
         cancel_url: `${YOUR_DOMAIN}/cancel.html`,
     });
-    console.log('stripe session', session)
 
-    console.log('userId', user.id)
-    console.log('stripeId', session.payment_intent)
     const deposit = await AppDataSource.getRepository(Deposit).create({
         createdAt: getCurrentTimestampUnix(),
         userId: user.id,
@@ -267,18 +264,8 @@ app.post('/create-checkout-session', async (req, res) => {
 });
 
 app.get('/get-deposits', async function (req, res) {
-    // const users = await AppDataSource.getRepository(User)
-    //     .createQueryBuilder('user')
-    //     .orderBy('user.id')
-    //     .getMany()
-    // users.forEach((user) => {
-    //     console.log(user)
-    // })
-    // const user = await getUserFromRequest(req)
-    // if (user === null) {
-    //     return res.status(401).send('Not authorized')
-    // }
-    // console.log('user', user)
-    // const balance = 10
-    return res.json([{d:1}, {d:2}])
+    const user = await getUserFromRequest(req)
+    const deposits = await AppDataSource.getRepository(Deposit)
+        .find({select: {createdAt: true, amount:true}, where: {userId: user.id}, order: {id: 'DESC'}})
+    return res.json(deposits)
 })
