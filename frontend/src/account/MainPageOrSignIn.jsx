@@ -24,7 +24,7 @@ function UserBalance() {
             <div className="card text-left">
                 <div className="card-body">
                     <h3 className="card-title">User balance: {userBalance / 100}$</h3>
-                    <h6 className="card-title">ETH virtual balance: {(userBalance / 100 / 1500).toFixed(6)} ETH</h6>
+                    <h6 className="card-title">ETH virtual balance: {(userBalance / 100 / 1500).toFixed(4)} ETH</h6>
                     <h6 className="card-title">Poligon virtual balance: {(userBalance / 100 / 0.8).toFixed(1)} MATIC</h6>
                     <AddFunds/>
                 </div>

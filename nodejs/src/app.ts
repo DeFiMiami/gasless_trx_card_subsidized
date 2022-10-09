@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request} from 'express';
 import {BigNumber, ethers} from "ethers";
 import * as dotenv from "dotenv";
 import {TransactionRequest} from "@ethersproject/abstract-provider";
@@ -14,7 +14,7 @@ import {User} from "./entity/User"
 import {Deposit} from "./entity/Deposit";
 
 const stripe = require('stripe')('sk_test_JxyAObUDQF5QwJZV9MF6c0iw');
-import {getUserAddress} from "./db-utils"
+import {getUserAddress, getUserBalance} from "./db-utils"
 import {UserOperation} from "./entity/UserOperation";
 const path = require('node:path');
 
@@ -55,6 +55,11 @@ const PROVIDERS = {
     5: process.env.GOERLI_RPC_URL
 }
 
+const NATIVE_TOKEN_PRICE = {
+    1: 1500,
+    5: 1500
+}
+
 const ETH = BigNumber.from(1e9).mul(1e9); // 10^18
 const GWEI = BigNumber.from(1e9); // 10^9
 const PRIORITY_GAS_PRICE = GWEI.mul(5); // miner bribe for sponsored transaction
@@ -69,6 +74,12 @@ const METAMASK_BALANCE_CHECK_CONTRACTS = [
     '0x9788c4e93f9002a7ad8e72633b11e8d1ecd51f9b'];
 
 
+async function getFakeBalance<P, ResBody, ReqBody, ReqQuery, Locals>(req: Request, address: string) {
+    let tokenPrice = NATIVE_TOKEN_PRICE[req.params.chainId]
+    let userBalance = await getUserBalance(address)
+    return BigNumber.from(ETH).mul(userBalance).div(tokenPrice).div(100)
+}
+
 app.post('/entrypoint/:chainId', async (req, res) => {
     var providerUrl = PROVIDERS[req.params.chainId]
     const provider = new ethers.providers.JsonRpcProvider(providerUrl)
@@ -79,8 +90,10 @@ app.post('/entrypoint/:chainId', async (req, res) => {
     console.log('Request: ', JSON.stringify(req.body));
 
     if (req.body.method == 'eth_getBalance') {
-        let firstAddress = (req.body)['params'][0].toLowerCase();
-        resSend(res, {'jsonrpc': '2.0', 'id': req.body.id, 'result': '0x6a6328983ab81a00000'});
+        let address = (req.body)['params'][0].toLowerCase();
+        let fakeBalance = await getFakeBalance(req, address);
+        const decodedBalance = ethers.utils.defaultAbiCoder.decode(['uint256'], [fakeBalance.toNumber()])
+        resSend(res, {'jsonrpc': '2.0', 'id': req.body.id, 'result': decodedBalance});
         return
     }
     if (req.body.method == 'eth_call' &&
@@ -93,7 +106,8 @@ app.post('/entrypoint/:chainId', async (req, res) => {
         const providerResponse = await forwardRequestToProvider(providerUrl, req);
         // const decodedAlchemyResult = ethers.utils.defaultAbiCoder.decode(['address[]'], alchemyResponse.data.result);
 
-        const newBalances = Array(walletAddresses.length).fill(BigNumber.from(1).mul(ETH))
+        let fakeBalance = await getFakeBalance(req, walletAddresses[0])
+        const newBalances = Array(walletAddresses.length).fill(fakeBalance)
         providerResponse.data.result = ethers.utils.defaultAbiCoder.encode(['uint256[]'], [newBalances]);
         resSend(res, providerResponse.data);
         return
@@ -226,19 +240,8 @@ app.get('/profile', async function (req, res) {
     if (user === null) {
         return res.status(401).send('Not authorized')
     }
-    const depositsSum = await AppDataSource.getRepository(Deposit)
-        .createQueryBuilder("deposit")
-        .select("SUM(deposit.amount)", "sum")
-        .getRawOne();
-    const deposits = depositsSum.sum
-    const chargeSum = await AppDataSource.getRepository(UserOperation)
-        .createQueryBuilder("uo")
-        .select("SUM(uo.usdCost)", "sum")
-        .getRawOne();
-    const charge = chargeSum.sum
-    console.log('balance', deposits)
-    console.log('charge', charge)
-    return res.json({balance: deposits - charge})
+    let totalBalance = await getUserBalance(user.address);
+    return res.json({balance: totalBalance})
 })
 
 app.post('/create-checkout-session', async (req, res) => {

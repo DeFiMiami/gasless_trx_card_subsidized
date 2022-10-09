@@ -38,9 +38,13 @@ function App() {
 
                 </Container>
             </Navbar>
-            <div className="App">
-                <h1>Pay for gas with credit card on all EVM blockchains</h1>
-                <MainPageOrSignIn/>
+            <div className="container-fluid">
+                <div className="App">
+                    <h1>Pay for transaction gas with a credit card</h1>
+                    <p>(compatible with all EVM blockchains)</p>
+
+                    <MainPageOrSignIn/>
+                </div>
             </div>
         </RecoilRoot>
     );
