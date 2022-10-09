@@ -16,6 +16,7 @@ import {Deposit} from "./entity/Deposit";
 const stripe = require('stripe')('sk_test_JxyAObUDQF5QwJZV9MF6c0iw');
 import {getUserAddress} from "./db-utils"
 import {UserOperation} from "./entity/UserOperation";
+const path = require('node:path');
 
 require('console-stamp')(console);
 
@@ -36,6 +37,8 @@ AppDataSource
     .catch((err) => {
         console.error("Error during Data Source initialization:", err)
     })
+
+app.use(express.static(path.join(__dirname, "../../frontend/build")));
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
