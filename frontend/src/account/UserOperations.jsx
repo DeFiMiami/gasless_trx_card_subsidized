@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {useRecoilState} from "recoil";
 import {accessTokenAtom, userOperationsAtom} from "../state";
-import {useEffect} from "react";
 import {getUserOperations} from "../actions";
 
 
@@ -38,7 +38,7 @@ export default function UserOperations() {
                             key={row.date}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                             <TableCell component="th" scope="row">{row.date}</TableCell>
-                            <TableCell>{row.usdCost.toFixed(2)}$</TableCell>
+                            <TableCell>{(row.usdCost / 100).toFixed(2)}$</TableCell>
                             <TableCell>
                                 <p>User txn:<br/>
                                     {row.userTxHash}</p>
