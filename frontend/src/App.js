@@ -14,6 +14,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import Button from '@mui/material/Button';
+import UserOperations from "./account/UserOperations";
 
 import AddFunds from "./account/AddFunds";
 import Deposits from "./account/Deposits";
@@ -41,6 +42,7 @@ function App() {
                 </Router>
                 <Profile/>
                 <UserAddressOrSignIn/>
+                <UserOperations/>
                 <AddFunds/>
                 <Deposits/>
                 <Button variant="contained">Hello World</Button>
