@@ -15,7 +15,7 @@ async function signin() {
             // Defining the chain aka Rinkeby testnet or Ethereum Main Net
             chainId: await web3.eth.getChainId(),
             // Give a user friendly name to the specific contract you are signing for.
-            name: 'Entry Point Sign In',
+            name: 'GoGas Sign In',
             // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
             verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
             // Just let's you know the latest version. Definitely make sure the field name is correct.

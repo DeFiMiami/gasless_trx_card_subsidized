@@ -21,7 +21,7 @@ function UserBalance() {
 
     return (
         <div>
-            <div className="card text-left">
+            <div className="card text-right">
                 <div className="card-body">
                     <h3 className="card-title">User balance: {userBalance / 100}$</h3>
                     <h6 className="card-title">ETH virtual balance: {(userBalance / 100 / 1500).toFixed(4)} ETH</h6>
@@ -38,17 +38,17 @@ export default function MainPageOrSignIn() {
     if (userAddress) {
         return (
             <div>
-                <Grid container spacing={2} paddingBottom={10} paddingTop={5}>
+                <Grid container spacing={2} paddingBottom={5} paddingTop={2} justifyContent="flex-end">
                     <Grid item xs={5}>
                         <UserBalance/>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} paddingTop={0}>
+                    <Grid item xs={7} paddingTop={0}>
+                        <UserOperations/>
+                    </Grid>
                     <Grid item xs={5}>
                         <Deposits/>
-                    </Grid>
-                    <Grid item xs={7}>
-                        <UserOperations/>
                     </Grid>
                 </Grid>
             </div>
