@@ -1,7 +1,7 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm"
 
 @Entity()
-export class Transaction {
+export class UserOperation {
 
     @PrimaryGeneratedColumn()
     id: number
@@ -13,16 +13,16 @@ export class Transaction {
     userId: number
 
     @Column()
-    subTxHash: string
+    sponsorTxHash: string
 
     @Column()
-    subTx: string
+    sponsorTxSerialized: string
 
     @Column()
-    origTxHash: string
+    userTxHash: string
 
     @Column()
-    origTx: string
+    userTxSerialized: string
 
     @Column()
     usdCost: number
