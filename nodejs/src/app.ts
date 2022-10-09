@@ -38,7 +38,9 @@ AppDataSource
         console.error("Error during Data Source initialization:", err)
     })
 
-app.use(express.static(path.join(__dirname, "../../frontend/build")));
+if (process.env.ENV !== 'local') {
+    app.use(express.static(path.join(__dirname, "../../frontend/build")));
+}
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);

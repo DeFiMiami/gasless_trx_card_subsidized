@@ -11,32 +11,15 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 
-function createData(
-    date: number,
-    amount: number,
-) {
-    return {
-        date: new Date(date).toLocaleTimeString(),
-        amount: amount / 100
-    }
-}
-
-const userDeposits = [
-    createData(1665280714,
-        150),
-    createData(2665280714,
-        50),
-]
-
 export default function Deposits() {
-    // const [accessToken] = useRecoilState(accessTokenAtom)
-    // const [userDeposits] = useRecoilState(userDepositsAtom)
+    const [accessToken] = useRecoilState(accessTokenAtom)
+    const [userDeposits] = useRecoilState(userDepositsAtom)
 
-    // useEffect(() => {
-    //     if (accessToken !== null) {
-    //         getDeposits()
-    //     }
-    // }, [accessToken])
+    useEffect(() => {
+        if (accessToken !== null) {
+            getDeposits()
+        }
+    }, [accessToken])
 
     return (
         <TableContainer component={Paper}>
