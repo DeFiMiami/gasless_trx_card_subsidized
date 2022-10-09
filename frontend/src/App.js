@@ -33,12 +33,6 @@ function App() {
     return (
         <RecoilRoot>
             <RecoilNexus/>
-            <Router>
-                <Routes>
-                    <Route path="/" element={<h1>Home Page</h1>}/>
-                    <Route path="add-funds-success" element={<Page1/>}/>
-                </Routes>
-            </Router>
             <Navbar bg="light" expand="lg">
                 <Container>
                     <Navbar.Brand><img className="logo" src={"/GoGasCover.png"}></img></Navbar.Brand>

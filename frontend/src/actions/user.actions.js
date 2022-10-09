@@ -46,12 +46,14 @@ async function signin() {
         },
     });
 
-    var from = await web3.eth.getAccounts();
+    var wallets = await web3.eth.getAccounts();
+    // let wallet = wallets[0];
+    let wallet = ethereum.selectedAddress;
     web3.currentProvider.sendAsync(
         {
             method: 'eth_signTypedData_v4',
-            params: [from[0], msgParams],
-            from: from[0],
+            params: [wallet, msgParams],
+            from: wallet,
         },
         async function (err, result) {
             if (err) return console.dir(err);

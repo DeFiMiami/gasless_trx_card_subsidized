@@ -203,11 +203,11 @@ app.post('/signin', async function (req, res) {
     });
     console.log('userAddress=', userAddress)
     let user = await AppDataSource.getRepository(User)
-        .findOne({where: {address: userAddress}})
+        .findOne({where: {address: userAddress.toLowerCase()}})
     if (user === null) {
         user = await AppDataSource.getRepository(User).create({
             createdAt: getCurrentTimestampUnix(),
-            address: userAddress
+            address: userAddress.toLowerCase()
         })
         user = await AppDataSource.getRepository(User).save(user)
     }
@@ -223,7 +223,7 @@ async function getUserFromRequest(req) {
     try {
         const decoded: any = jwt.verify(token, jwtPrivateKey)
         const user = await AppDataSource.getRepository(User)
-            .findOne({where: {address: decoded.userAddress}})
+            .findOne({where: {address: decoded.userAddress.toLowerCase()}})
         return user
     } catch (err) {
         console.log('err', err)

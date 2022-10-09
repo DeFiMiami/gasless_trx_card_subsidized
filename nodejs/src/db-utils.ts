@@ -4,13 +4,13 @@ import {Deposit} from "./entity/Deposit";
 import {UserOperation} from "./entity/UserOperation";
 
 export async function getUserAddress(userAddress: string) {
-    return await AppDataSource.getRepository(User).findOne({where: {address: userAddress}})
+    return await AppDataSource.getRepository(User).findOne({where: {address: userAddress.toLowerCase()}})
 }
 
 export async function getUserUsdBalance(userAddress: string) {
     let addressLowerCase = userAddress.toLowerCase();
     let user = await AppDataSource.getRepository(User)
-        .findOne({where: {address: addressLowerCase}})
+        .findOne({where: {address: addressLowerCase.toLowerCase()}})
     if (user === null) {
         console.log('UserBalance_USD_cents', addressLowerCase, "not found")
         return 0
