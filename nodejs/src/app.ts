@@ -177,8 +177,8 @@ function getUserAddressFromRequest(req) {
     }
 }
 
-app.get('/account', async function (req, res) {
-    console.log('account')
+app.get('/profile', async function (req, res) {
+    console.log('profile')
     // const users = await AppDataSource.getRepository(User)
     //     .createQueryBuilder('user')
     //     .orderBy('user.id')
@@ -193,5 +193,6 @@ app.get('/account', async function (req, res) {
     const user = await AppDataSource.getRepository(User)
         .findOne({where: {address: userAddress}})
     console.log('userAddress', userAddress)
-    return res.json(user)
+    const balance = 0
+    return res.json({balance})
 })

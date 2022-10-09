@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 //import {recoverTypedSignature_v4} from 'eth-sig-util'
 import axios from "axios";
-import { setRecoil } from 'recoil-nexus'
-import {userAddressAtom, accessTokenAtom} from "../state";
+import {getRecoil, setRecoil} from 'recoil-nexus'
+import {userAddressAtom, accessTokenAtom, userBalanceAtom} from "../state";
 
 
 async function signin() {
@@ -98,7 +98,19 @@ async function signout() {
     setRecoil(userAddressAtom, null)
 }
 
+async function getProfile() {
+    const accessToken = await getRecoil(accessTokenAtom);
+    let response = await axios.get('/profile',
+        {
+            headers: {'Authorization': `Bearer ${accessToken}`}
+        }
+    );
+    setRecoil(userBalanceAtom, response.data.balance)
+    return response.data.balance
+}
+
 export {
     signin,
-    signout
+    signout,
+    getProfile
 }

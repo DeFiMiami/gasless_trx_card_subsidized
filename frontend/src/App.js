@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import {
     BrowserRouter as Router,
     Routes,
@@ -9,6 +8,7 @@ import './App.css';
 import UserAddressOrSignIn from './account/UserAddressOrSignIn'
 import {RecoilRoot} from "recoil"
 import RecoilNexus from 'recoil-nexus'
+import Profile from "./account/Profile";
 
 function App() {
     return (
@@ -31,7 +31,7 @@ function App() {
                         <Route path="page3" element={<Page3/>}/>
                     </Routes>
                 </Router>
-
+                <Profile />
                 <UserAddressOrSignIn/>
             </div>
         </RecoilRoot>

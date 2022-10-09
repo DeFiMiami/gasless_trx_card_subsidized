@@ -10,7 +10,13 @@ const accessTokenAtom = atom({
   default: localStorage.getItem('accessToken'),
 })
 
+const userBalanceAtom = atom({
+    key: "userBalance",
+    default: null
+})
+
 export {
     userAddressAtom,
-    accessTokenAtom
+    accessTokenAtom,
+    userBalanceAtom
 };
