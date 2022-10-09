@@ -217,13 +217,6 @@ async function getUserFromRequest(req) {
 
 app.get('/profile', async function (req, res) {
     console.log('profile')
-    // const users = await AppDataSource.getRepository(User)
-    //     .createQueryBuilder('user')
-    //     .orderBy('user.id')
-    //     .getMany()
-    // users.forEach((user) => {
-    //     console.log(user)
-    // })
     const user = await getUserFromRequest(req)
     if (user === null) {
         return res.status(401).send('Not authorized')
@@ -244,7 +237,7 @@ app.get('/profile', async function (req, res) {
 })
 
 app.post('/create-checkout-session', async (req, res) => {
-    const YOUR_DOMAIN = 'http://localhost:3000';
+    const YOUR_DOMAIN = process.env.DOMAIN
     const user = await getUserFromRequest(req)
     const session = await stripe.checkout.sessions.create({
         line_items: [
@@ -256,7 +249,7 @@ app.post('/create-checkout-session', async (req, res) => {
         ],
         mode: 'payment',
         success_url: `${YOUR_DOMAIN}/add-funds-success`,
-        cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+        cancel_url: `${YOUR_DOMAIN}/add-funds-cancel`,
     });
 
     const deposit = await AppDataSource.getRepository(Deposit).create({

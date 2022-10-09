@@ -22,16 +22,14 @@ function App() {
                     <div className="list">
                         <ul>
                             <li><Link to="/">Home</Link></li>
-                            <li><Link to="add-funds-success">Page 1</Link></li>
                             <li><Link to="deposits">Deposits</Link></li>
-                            <li><Link to="page3">Page 3</Link></li>
                         </ul>
                     </div>
                     <Routes>
                         <Route path="/" element={<h1>Home Page</h1>}/>
-                        <Route path="add-funds-success" element={<Page1/>}/>
                         <Route path="deposits" element={<DepositsPage/>}/>
-                        <Route path="page3" element={<Page3/>}/>
+                        <Route path="add-funds-success" element={<AddFundsSuccess/>}/>
+                        <Route path="add-funds-cancel" element={<AddFundsCancel/>}/>
                     </Routes>
                 </Router>
                 <Profile/>
@@ -45,7 +43,7 @@ function App() {
 }
 
 
-function Page1() {
+function AddFundsSuccess() {
     return (
         <div>
             <h1>Add Funds Success</h1>
@@ -59,24 +57,12 @@ function DepositsPage() {
     )
 }
 
-function Page3() {
+function AddFundsCancel() {
     return (
         <div>
-            <h1>Page 3</h1>
+            <h1>Add Funds Cancel</h1>
         </div>
     )
-}
-
-function Home() {
-    return <h2>Home</h2>;
-}
-
-function About() {
-    return <h2>About</h2>;
-}
-
-function Users() {
-    return <h2>Users</h2>;
 }
 
 export default App;
