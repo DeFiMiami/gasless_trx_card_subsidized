@@ -38,9 +38,7 @@ AppDataSource
         console.error("Error during Data Source initialization:", err)
     })
 
-if (process.env.ENV !== 'local') {
-    app.use(express.static(path.join(__dirname, "build/frontend")));
-}
+app.use(express.static('build/frontend'))
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
@@ -185,14 +183,6 @@ app.post('/entrypoint/:chainId', async (req, res) => {
     let providerResponse = await forwardRequestToProvider(providerUrl, req);
     resSend(res, providerResponse.data)
 })
-
-app.get('/', (req, res) => {
-    res.json({message: "v1"});
-});
-
-app.get('/api', (req, res) => {
-    res.json({message: "Hello from server!"});
-});
 
 app.post('/stripe-webhook', async function (req, res) {
     const stripeResponse = req.body
