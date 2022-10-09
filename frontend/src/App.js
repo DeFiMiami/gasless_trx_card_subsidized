@@ -20,6 +20,7 @@ function LogoutButton(props) {
             <Navbar.Text>
                 {userAddress}
             </Navbar.Text>
+            &nbsp;
             <Button onClick={signout}>Sign out</Button>
         </Navbar.Collapse>;
     }
@@ -33,7 +34,7 @@ function App() {
             <RecoilNexus/>
             <Navbar bg="light" expand="lg">
                 <Container>
-                    <Navbar.Brand>GoGas</Navbar.Brand>
+                    <Navbar.Brand><img className="logo" src={"/GoGasCover.png"}></img></Navbar.Brand>
                     <LogoutButton/>
 
                 </Container>

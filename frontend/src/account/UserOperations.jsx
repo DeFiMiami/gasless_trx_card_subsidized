@@ -24,7 +24,7 @@ export default function UserOperations() {
 
     return (
         <div>
-            <h3>Transactions:</h3>
+            <h3>Recent Transactions:</h3>
             <TableContainer component={Paper}>
                 <Table sx={{minWidth: 650}} aria-label="simple table">
                     <TableHead>
