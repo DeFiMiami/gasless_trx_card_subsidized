@@ -201,16 +201,13 @@ app.post('/signin', async function (req, res) {
 
 async function getUserFromRequest(req) {
     const token = req.headers['authorization'] && req.headers['authorization'].toString().split(' ')[1]
-    console.log('token', token)
     if (token === null) {
         return null
     }
     try {
         const decoded: any = jwt.verify(token, jwtPrivateKey)
-        console.log('decoded token', decoded)
         const user = await AppDataSource.getRepository(User)
             .findOne({where: {address: decoded.userAddress}})
-        console.log('getUserFromRequest user=', user)
         return user
     } catch (err) {
         console.log('err', err)
@@ -231,9 +228,13 @@ app.get('/profile', async function (req, res) {
     if (user === null) {
         return res.status(401).send('Not authorized')
     }
-    console.log('user', user)
-    const balance = 10
-    return res.json({balance})
+    const result1 = await AppDataSource.getRepository(Deposit)
+        .createQueryBuilder("deposit")
+            .select("SUM(deposit.amount)", "sum")
+            .getRawOne();
+    const deposits = result1.sum
+    console.log('balance', deposits)
+    return res.json({balance: deposits})
 })
 
 app.post('/create-checkout-session', async (req, res) => {
@@ -266,14 +267,14 @@ app.post('/create-checkout-session', async (req, res) => {
 app.get('/get-deposits', async function (req, res) {
     const user = await getUserFromRequest(req)
     const deposits = await AppDataSource.getRepository(Deposit)
-        .find({select: {createdAt: true, amount:true}, where: {userId: user.id}, order: {id: 'DESC'}})
+        .find({select: {id:true, createdAt: true, amount:true}, where: {userId: user.id}, order: {id: 'DESC'}})
     return res.json(deposits)
 })
 
 app.get('/get-user-operations', async function (req, res) {
     const user = await getUserFromRequest(req)
     const userOperations = await AppDataSource.getRepository(UserOperation)
-        .find({select: {createdAt: true, sponsorTxHash:true,
+        .find({select: {id:true, createdAt: true, sponsorTxHash:true,
                 sponsorTxSerialized: true, userTxHash: true, userTxSerialized: true, usdCost: true},
             where: {userId: user.id}, order: {id: 'DESC'}})
     return res.json(userOperations)
