@@ -39,7 +39,7 @@ AppDataSource
     })
 
 if (process.env.ENV !== 'local') {
-    app.use(express.static(path.join(__dirname, "../../frontend/build")));
+    app.use(express.static(path.join(__dirname, "../build/frontend")));
 }
 
 app.listen(port, () => {
