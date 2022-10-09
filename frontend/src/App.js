@@ -1,9 +1,4 @@
-import {
-    BrowserRouter as Router,
-    Routes,
-    Route,
-    Link
-} from "react-router-dom";
+import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
 import './App.css';
 import UserAddressOrSignIn from './account/UserAddressOrSignIn'
 import {RecoilRoot} from "recoil"
@@ -13,7 +8,6 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import Button from '@mui/material/Button';
 import UserOperations from "./account/UserOperations";
 
 import AddFunds from "./account/AddFunds";
@@ -45,7 +39,6 @@ function App() {
                 <UserOperations/>
                 <AddFunds/>
                 <Deposits/>
-                <Button variant="contained">Hello World</Button>
             </div>
         </RecoilRoot>
     );

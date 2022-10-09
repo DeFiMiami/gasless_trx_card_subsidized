@@ -1,6 +1,7 @@
 import { useRecoilState } from "recoil";
 import { userAddressAtom } from "../state";
 import {signin, signout} from "../actions";
+import Button from "@mui/material/Button";
 
 export default function UserAddressOrSignIn() {
     const [userAddress] = useRecoilState(userAddressAtom);
@@ -17,7 +18,7 @@ export default function UserAddressOrSignIn() {
     } else {
         return (
             <div>
-                <button onClick={signin}>Sign In</button>
+                <Button variant="contained" onClick={signin}>Sign In</Button>
             </div>
         )
     }
